@@ -53,4 +53,22 @@
             android:text="Primary" />
     </DialerFilter>
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/dialerFilter1"
+        android:layout_centerHorizontal="true"
+        android:text="Button" />
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialerFilter1"
+        android:layout_below="@+id/dialerFilter1"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="37dp"
+        android:text="CheckBox" />
+
 </RelativeLayout>
