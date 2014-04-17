@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
     }
     
     public void btnClick(View view) {
-    	Log.d("android", "clicked");
+    	Log.d("android", view.getId() + "clicked");
     }
 
     @Override
