@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -72,16 +75,34 @@ public class MainActivity extends ActionBarActivity {
 
 			spinnerMonth.setAdapter(saMonth);
 			
-//			String[] dateList = new String[31];
-//			for (int i = 1; i <= 31; i++) {
-//				dateList[i] = String.valueOf(i);
-//			}
-//			
-//			ArrayAdapter<String> saDate = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, dateList);
-//
-//			spinnerDate.setAdapter(saDate);
+			spinnerMonth.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> adapter, View view,
+						int option, long id) {
+					int days = Integer.valueOf(getResources().getStringArray(R.array.MonthDays)[option]);
+					setDateSpinner(days);
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			
 			return rootView;
+		}
+
+		private void setDateSpinner(int dateCount) {
+			String[] dateList = new String[dateCount];
+			for (int i = 0; i < dateCount; i++) {
+				dateList[i] = String.valueOf(i + 1);
+			}
+			
+			ArrayAdapter<String> saDate = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, dateList);
+
+			spinnerDate.setAdapter(saDate);
 		}
 	}
 

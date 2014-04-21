@@ -14,5 +14,19 @@
         <item >11月</item>
         <item >12月</item>       
     </string-array>
+    <string-array name="MonthDays">
+        <item >31</item>
+        <item >28</item>
+        <item >31</item>
+        <item >30</item>
+        <item >31</item>
+        <item >30</item>
+        <item >31</item>
+        <item >31</item>
+        <item >30</item>
+        <item >31</item>
+        <item >30</item>
+        <item >31</item>       
+    </string-array>
     
 </resources>
