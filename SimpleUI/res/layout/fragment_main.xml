@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:ems="10"
-        android:password="true"
         android:text="Hello World" >
 
         <requestFocus />
