@@ -1,6 +1,7 @@
 package com.example.simpleui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -67,7 +68,15 @@ public class MainActivity extends ActionBarActivity {
 				text = "****";
 			}
 			Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+			
+			Intent intent = new Intent();
+			intent.setClass(getActivity(), MessageActivity.class);
+			intent.putExtra("TEXT", text);
+			getActivity().startActivity(intent);
+			
+
 			textField.getText().clear();
+			
 		}
 
 		Button btn;
