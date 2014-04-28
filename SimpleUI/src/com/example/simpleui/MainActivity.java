@@ -21,6 +21,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.parse.Parse;
+
 public class MainActivity extends ActionBarActivity {
 
 	@Override
@@ -32,6 +34,8 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		Parse.initialize(this, "wj1uKrCQB65p4ohKMgUF8olZnegyh4EgK20Qnfy6",
+				"afAqZ39F3NL0qDlIbFdzSwfmaybehimetEcAIgDu");
 	}
 
 	@Override
@@ -68,15 +72,15 @@ public class MainActivity extends ActionBarActivity {
 				text = "****";
 			}
 			Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
-			
+
 			Intent intent = new Intent();
 			intent.setClass(getActivity(), MessageActivity.class);
 			intent.putExtra("TEXT", text);
+			intent.putExtra("CHECKED", checkBox.isChecked());
 			getActivity().startActivity(intent);
-			
 
 			textField.getText().clear();
-			
+
 		}
 
 		Button btn;
