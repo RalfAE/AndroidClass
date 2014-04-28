@@ -5,18 +5,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -29,8 +32,10 @@ import com.parse.SaveCallback;
 public class MessageActivity extends Activity {
 
 	private static final String FILE_NAME = "text.txt";
-	TextView textView = null;
-	ProgressBar progressBar = null;
+	// TextView textView = null;
+	// ProgressBar progressBar = null;
+	ProgressDialog progressDialog = null;
+	ListView listView = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +46,16 @@ public class MessageActivity extends Activity {
 		Intent intent = getIntent();
 		String text = intent.getStringExtra("TEXT");
 		boolean isChecked = intent.getBooleanExtra("CHECKED", false);
-		textView = (TextView) findViewById(R.id.textView1);
-		progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+		// textView = (TextView) findViewById(R.id.textView1);
+		// progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 
+		listView = (ListView) findViewById(R.id.listView1);
+
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setTitle("SimpleUI");
+		progressDialog.setMessage("加載中, 請稍候...");
+		progressDialog.setCancelable(false); // 是否允許讓使用者在點擊別處理取消
+		progressDialog.show();
 		// writeFile(text);
 		// writeFileSD(text);
 		// textView.setText(readFile());
@@ -51,7 +63,7 @@ public class MessageActivity extends Activity {
 		ParseObject testObject = new ParseObject("MessageText");
 		testObject.put("TEXT", text);
 		testObject.put("CHECKED", isChecked);
-		
+
 		saveData(testObject);
 		// 呼叫此方法會等server端真正智存完畢才會繼續往下執行
 		// try {
@@ -69,13 +81,32 @@ public class MessageActivity extends Activity {
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> msgList, ParseException e) {
 				if (e == null) {
-					StringBuffer sb = new StringBuffer();
+					// StringBuffer sb = new StringBuffer();
+					// for (ParseObject msg : msgList) {
+					// sb.append(msg.get("TEXT")).append("\r\n");
+					// }
+
+					List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+
 					for (ParseObject msg : msgList) {
-						sb.append(msg.get("TEXT")).append("\r\n");
+						Map<String, Object> dataMap = new HashMap<String, Object>();
+						dataMap.put("TEXT", msg.getString("TEXT"));
+						dataMap.put("isChecked", msg.getBoolean("isChecked"));
+						data.add(dataMap);
 					}
+					String[] from = new String[] { "TEXT", "isChecked" };
+					int[] to = new int[] { android.R.id.text1,
+							android.R.id.text2 };
+					SimpleAdapter adapter = new SimpleAdapter(
+							MessageActivity.this, data,
+							android.R.layout.simple_list_item_2, from, to);
+
+					listView.setAdapter(adapter);
+
 					// GONE: 看不見也不占位子; INVISIBLE: 會占位子
-					progressBar.setVisibility(View.GONE);
-					textView.setText(sb.toString());
+					// progressBar.setVisibility(View.GONE);
+					progressDialog.dismiss();
+					// textView.setText(sb.toString());
 
 				} else {
 					e.printStackTrace();
