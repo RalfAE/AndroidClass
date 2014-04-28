@@ -1,6 +1,8 @@
 package com.example.takephoto;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -39,6 +41,9 @@ public class MainActivity extends ActionBarActivity {
 		int id = item.getItemId();
 		if (id == R.id.PHOTO) {
 			Log.d("Hit Menu", "HIT!!!");
+			Intent intent = new Intent();
+			intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+			startActivity(intent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
