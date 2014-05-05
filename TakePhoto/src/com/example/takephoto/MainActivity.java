@@ -1,6 +1,7 @@
 package com.example.takephoto;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +26,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
 @SuppressLint("ValidFragment")
 public class MainActivity extends ActionBarActivity {
@@ -92,8 +97,10 @@ public class MainActivity extends ActionBarActivity {
 				// save(bitmap);
 				// imageView.setImageBitmap(bitmap);
 
-				imageView.setImageURI(fileUri);
-				textView.setText(fileUri.getPath());
+				// imageView.setImageURI(fileUri);
+				// textView.setText(fileUri.getPath());
+
+				saveFileToParse(getFile());
 			} else if (resultCode == RESULT_CANCELED) {
 				Log.d("Debug", "Cancel!");
 
@@ -105,6 +112,45 @@ public class MainActivity extends ActionBarActivity {
 			}
 
 		}
+
+	}
+
+	private void saveFileToParse(File f) {
+
+		// sample
+		// https://parse.com/docs/android_guide#files
+		// byte[] data = "Working at Parse is great!".getBytes();
+		// ParseFile file = new ParseFile("resume.txt", data);
+
+		try {
+			FileInputStream fis = new FileInputStream(f);
+
+			byte[] data = new byte[(int) f.length()];
+			int offset = 0;
+			int index = 0;
+			while ((index = fis.read(data, offset, (data.length - offset))) != -1) {
+				offset = offset + index;
+			}
+
+			final ParseFile parseFile = new ParseFile("photo.png", data);
+			parseFile.saveInBackground(new SaveCallback() {
+
+				@Override
+				public void done(ParseException arg0) {
+					textView.setText(parseFile.getUrl());
+
+				}
+			});
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		ParseObject jobApplication = new ParseObject("takePhoto");
+		jobApplication.put("applicantName", "takePhoto");
+		jobApplication.put("applicantResumeFile", f);
+		jobApplication.saveInBackground();
 
 	}
 
