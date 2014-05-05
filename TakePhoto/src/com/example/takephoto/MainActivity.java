@@ -1,9 +1,18 @@
 package com.example.takephoto;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -14,12 +23,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 @SuppressLint("ValidFragment")
 public class MainActivity extends ActionBarActivity {
 
 	private static final int REQUEST_CODE = 2266;
 	ImageView imageView;
+	TextView textView;
+	Uri fileUri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +62,10 @@ public class MainActivity extends ActionBarActivity {
 			Log.d("Hit Menu", "HIT!!!");
 			Intent intent = new Intent();
 			intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+			
+			fileUri = Uri.fromFile(getFile());
+			
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 			// 改用會回傳結果的方法
 			// startActivity(intent);
 			startActivityForResult(intent, REQUEST_CODE);
@@ -68,9 +84,11 @@ public class MainActivity extends ActionBarActivity {
 
 			if (resultCode == RESULT_OK) {
 				Log.d("Debug", "OK!");
-				Bitmap bitmap = intent.getParcelableExtra("data");
-				imageView.setImageBitmap(bitmap);
-				
+//				Bitmap bitmap = intent.getParcelableExtra("data");
+//				imageView.setImageBitmap(bitmap);
+//				save(bitmap);
+
+				textView.setText(fileUri.getPath());
 			} else if (resultCode == RESULT_CANCELED) {
 				Log.d("Debug", "Cancel!");
 
@@ -83,6 +101,39 @@ public class MainActivity extends ActionBarActivity {
 
 		}
 
+	}
+	
+	private void save(Bitmap bitmap) {
+
+		File imageFile = getFile();
+
+		try {
+			FileOutputStream fos = new FileOutputStream(imageFile);
+			bitmap.compress(CompressFormat.PNG, 100, fos);
+
+			fos.flush();
+			fos.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		textView.setText(imageFile.getAbsolutePath());
+
+	}
+
+	private File getFile() {
+		File saveDir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+		if (!saveDir.exists()) {
+			saveDir.mkdirs();
+		}
+
+		File imageFile = new File(saveDir, "photo.png");
+		return imageFile;
 	}
 	
 	
@@ -101,6 +152,7 @@ public class MainActivity extends ActionBarActivity {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			imageView = (ImageView) rootView.findViewById(R.id.imageView1);
+			textView = (TextView) rootView.findViewById(R.id.textView1);
 			return rootView;
 		}
 	}
