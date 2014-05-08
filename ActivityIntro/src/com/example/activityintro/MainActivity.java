@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 
 public class MainActivity extends ActionBarActivity {
 
-	private static final int MAIN_ACTIVITY_CODE = 0;
+	private static final int MAIN_ACTIVITY_CODE = 1;
+	private static final int ACT2_REQUEST_CODE = 2;
+	private static final int ACT3_REQUEST_CODE = 3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +65,31 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
-	public void changeToActivity1(View view) {
+	public void changeToActivity(View view) {
 		Intent intent = new Intent();
-		intent.setClass(this, Activity1.class);
-		// startActivity(intent);
+		switch (view.getId()) {
+		case R.id.button1:
+			intent.setClass(this, Activity1.class);
+			// startActivity(intent);
 
-		intent.putExtra("MESSAGE", "HI");
-		startActivityForResult(intent, MAIN_ACTIVITY_CODE);
+			intent.putExtra("MESSAGE", "HI1");
+			startActivityForResult(intent, MAIN_ACTIVITY_CODE);
+			break;
+		case R.id.button2:
+			intent.setClass(this, Activity2.class);
+			// startActivity(intent);
+
+			intent.putExtra("MESSAGE", "HI2");
+			startActivityForResult(intent, ACT2_REQUEST_CODE);
+			break;
+		case R.id.button3:
+			intent.setClass(this, Activity3.class);
+			// startActivity(intent);
+
+			intent.putExtra("MESSAGE", "HI3");
+			startActivityForResult(intent, ACT3_REQUEST_CODE);
+			break;
+		}
 	}
 
 	@Override
@@ -77,13 +97,13 @@ public class MainActivity extends ActionBarActivity {
 			Intent intent) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, intent);
-		if (requestCode == MAIN_ACTIVITY_CODE) {
+//		if (requestCode == MAIN_ACTIVITY_CODE) {
 			Log.d("debug", "requestCode:" + requestCode + ", resultCode"
 					+ resultCode);
 			if (intent != null) {
 				Log.d("debug", intent.getStringExtra("WHICHBUTTON"));
 			}
-		}
+//		}
 	}
 
 }

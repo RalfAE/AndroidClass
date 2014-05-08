@@ -22,7 +22,26 @@
         android:layout_below="@+id/textView1"
         android:layout_marginLeft="22dp"
         android:layout_marginTop="76dp"
-        android:onClick="changeToActivity1"
-        android:text="Button" />
+        android:onClick="changeToActivity"
+        android:text="ACT1" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_marginLeft="32dp"
+        android:layout_toRightOf="@+id/button1"
+        android:onClick="changeToActivity"
+        android:text="ACT2" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/button2"
+        android:layout_centerVertical="true"
+        android:onClick="changeToActivity"
+        android:text="ACT3" />
 
 </RelativeLayout>
