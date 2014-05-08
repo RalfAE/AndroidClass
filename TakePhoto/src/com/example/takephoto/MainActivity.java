@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 @SuppressLint("ValidFragment")
@@ -126,10 +125,19 @@ public class MainActivity extends ActionBarActivity {
 			FileInputStream fis = new FileInputStream(f);
 
 			byte[] data = new byte[(int) f.length()];
+			// int offset = 0;
+			// int index = 0;
+			// while ((index = fis.read(data, offset, (((int) f.length()) -
+			// offset))) != -1) {
+			// offset = offset + index;
+			// }
+
+			fis.read(data);
+
 			int offset = 0;
-			int index = 0;
-			while ((index = fis.read(data, offset, (data.length - offset))) != -1) {
-				offset = offset + index;
+			int numRead = 0;
+			while ((numRead = fis.read(data, offset, data.length - offset)) != -1) {
+				offset += numRead;
 			}
 
 			final ParseFile parseFile = new ParseFile("photo.png", data);
@@ -138,6 +146,8 @@ public class MainActivity extends ActionBarActivity {
 				@Override
 				public void done(ParseException arg0) {
 					textView.setText(parseFile.getUrl());
+//					Uri fileUri = Uri.fromFile(parseFile);
+//					imageView.setImageURI(fileUri);
 
 				}
 			});
@@ -147,10 +157,10 @@ public class MainActivity extends ActionBarActivity {
 			e.printStackTrace();
 		}
 
-		ParseObject jobApplication = new ParseObject("takePhoto");
-		jobApplication.put("applicantName", "takePhoto");
-		jobApplication.put("applicantResumeFile", f);
-		jobApplication.saveInBackground();
+		// ParseObject jobApplication = new ParseObject("takePhoto");
+		// jobApplication.put("applicantName", "takePhoto");
+		// jobApplication.put("applicantResumeFile", f);
+		// jobApplication.saveInBackground();
 
 	}
 
