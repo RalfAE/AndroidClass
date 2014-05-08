@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -97,13 +98,19 @@ public class MainActivity extends ActionBarActivity {
 			Intent intent) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, intent);
-//		if (requestCode == MAIN_ACTIVITY_CODE) {
+		if (requestCode == MAIN_ACTIVITY_CODE) {
 			Log.d("debug", "requestCode:" + requestCode + ", resultCode"
 					+ resultCode);
 			if (intent != null) {
 				Log.d("debug", intent.getStringExtra("WHICHBUTTON"));
 			}
-//		}
+			Toast.makeText(this, "ACT1", Toast.LENGTH_SHORT).show();
+		} else if (requestCode == ACT2_REQUEST_CODE) {
+			Toast.makeText(this, "ACT2", Toast.LENGTH_SHORT).show();
+		} else if (requestCode == ACT3_REQUEST_CODE) {
+			Toast.makeText(this, "ACT3", Toast.LENGTH_SHORT).show();
+
+		}
 	}
 
 }

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
 @SuppressLint("ValidFragment")
@@ -96,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
 				// save(bitmap);
 				// imageView.setImageBitmap(bitmap);
 
-				// imageView.setImageURI(fileUri);
+				imageView.setImageURI(fileUri);
 				// textView.setText(fileUri.getPath());
 
 				saveFileToParse(getFile());
@@ -140,27 +141,39 @@ public class MainActivity extends ActionBarActivity {
 				offset += numRead;
 			}
 
+			// ParseObject jobApplication = new ParseObject("takePhoto");
+			// jobApplication.put("applicationName", "takePhoto");
+			// jobApplication.put("file", f);
+			// try {
+			// jobApplication.save();
+			// } catch (ParseException e) {
+			// e.printStackTrace();
+			// }
+
 			final ParseFile parseFile = new ParseFile("photo.png", data);
 			parseFile.saveInBackground(new SaveCallback() {
 
 				@Override
 				public void done(ParseException arg0) {
 					textView.setText(parseFile.getUrl());
-//					Uri fileUri = Uri.fromFile(parseFile);
-//					imageView.setImageURI(fileUri);
-
+					System.out.println(parseFile.getUrl());
+					// 存檔
+					ParseObject object = new ParseObject("photo");
+					object.put("file", parseFile);
+					try {
+						object.save();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			});
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// ParseObject jobApplication = new ParseObject("takePhoto");
-		// jobApplication.put("applicantName", "takePhoto");
-		// jobApplication.put("applicantResumeFile", f);
-		// jobApplication.saveInBackground();
 
 	}
 
