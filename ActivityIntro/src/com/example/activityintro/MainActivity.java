@@ -2,6 +2,7 @@ package com.example.activityintro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.activityintro.fragment.MyFragment1;
 import com.example.activityintro.fragment.PlaceholderFragment;
 
 public class MainActivity extends ActionBarActivity {
@@ -48,8 +50,6 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-
-
 	public void changeToActivity(View view) {
 		Intent intent = new Intent();
 		switch (view.getId()) {
@@ -75,6 +75,29 @@ public class MainActivity extends ActionBarActivity {
 			startActivityForResult(intent, ACT3_REQUEST_CODE);
 			break;
 		}
+	}
+
+	public void replaceFragment(View view) {
+
+		FragmentTransaction txn = getSupportFragmentManager()
+				.beginTransaction();
+
+		switch (view.getId()) {
+
+		case R.id.fragmentMainBtn:
+
+			txn.replace(R.id.container, new MyFragment1());
+			break;
+
+		case R.id.myFragmentBtn:
+
+			txn.replace(R.id.container, new PlaceholderFragment());
+			break;
+
+		}
+
+		txn.commit();
+
 	}
 
 	@Override
