@@ -18,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity {
 		TextView textView;
 		EditText editText;
 		Button button;
-		Dialog dialog; // 未測完
+		ProgressDialog dialog; // 未測完
 
 		public PlaceholderFragment() {
 		}
@@ -97,7 +97,7 @@ public class MainActivity extends ActionBarActivity {
 			textView = (TextView) rootView.findViewById(R.id.textView1);
 			editText = (EditText) rootView.findViewById(R.id.editText1);
 			button = (Button) rootView.findViewById(R.id.button1);
-//			dialog = new Dialog(getActivity());
+			dialog = new ProgressDialog(getActivity());
 
 			button.setOnClickListener(new OnClickListener() {
 
@@ -113,7 +113,7 @@ public class MainActivity extends ActionBarActivity {
 						@Override
 						protected void onPreExecute() {
 							super.onPreExecute();
-//							dialog.show();
+							dialog.show();
 						}
 
 						@Override
@@ -125,9 +125,9 @@ public class MainActivity extends ActionBarActivity {
 						@Override
 						protected void onPostExecute(String result) {
 							super.onPostExecute(result);
-//							dialog.dismiss();
 							Toast.makeText(getActivity(), result,
 									Toast.LENGTH_SHORT).show();
+							dialog.dismiss();
 						}
 					};
 
