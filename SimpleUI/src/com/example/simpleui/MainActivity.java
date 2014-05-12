@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseInstallation;
+import com.parse.ParsePush;
 import com.parse.PushService;
 
 public class MainActivity extends ActionBarActivity {
@@ -40,6 +41,9 @@ public class MainActivity extends ActionBarActivity {
 				"afAqZ39F3NL0qDlIbFdzSwfmaybehimetEcAIgDu");
 		PushService.setDefaultPushCallback(this, MainActivity.class);
 		ParseInstallation.getCurrentInstallation().saveInBackground();
+		// When users indicate they are Giants fans, we subscribe them to that
+		// channel.
+		PushService.subscribe(this, "ChannelALL", MainActivity.class);
 	}
 
 	@Override
@@ -76,6 +80,11 @@ public class MainActivity extends ActionBarActivity {
 				text = "****";
 			}
 			Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+
+			ParsePush push = new ParsePush();
+			push.setChannel("ChannelALL");
+			push.setMessage(text);
+			push.sendInBackground();
 
 			Intent intent = new Intent();
 			intent.setClass(getActivity(), MessageActivity.class);
