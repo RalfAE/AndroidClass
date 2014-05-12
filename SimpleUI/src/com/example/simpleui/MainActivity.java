@@ -22,6 +22,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.Parse;
+import com.parse.ParseInstallation;
+import com.parse.PushService;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -36,6 +38,8 @@ public class MainActivity extends ActionBarActivity {
 		}
 		Parse.initialize(this, "wj1uKrCQB65p4ohKMgUF8olZnegyh4EgK20Qnfy6",
 				"afAqZ39F3NL0qDlIbFdzSwfmaybehimetEcAIgDu");
+		PushService.setDefaultPushCallback(this, MainActivity.class);
+		ParseInstallation.getCurrentInstallation().saveInBackground();
 	}
 
 	@Override
