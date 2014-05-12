@@ -13,18 +13,27 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity {
@@ -38,11 +47,12 @@ public class MainActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		
+
 		// MainActivity禁止作INTERNET CONNECTION, 這邊為了上課方便才在此開放所有權限(極度不建議此作法)
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-				.permitAll().build();
-		StrictMode.setThreadPolicy(policy);
+		// StrictMode.ThreadPolicy policy = new
+		// StrictMode.ThreadPolicy.Builder()
+		// .permitAll().build();
+		// StrictMode.setThreadPolicy(policy);
 
 	}
 
@@ -72,6 +82,9 @@ public class MainActivity extends ActionBarActivity {
 	public static class PlaceholderFragment extends Fragment {
 
 		TextView textView;
+		EditText editText;
+		Button button;
+		Dialog dialog; // 未測完
 
 		public PlaceholderFragment() {
 		}
@@ -82,21 +95,99 @@ public class MainActivity extends ActionBarActivity {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 			textView = (TextView) rootView.findViewById(R.id.textView1);
+			editText = (EditText) rootView.findViewById(R.id.editText1);
+			button = (Button) rootView.findViewById(R.id.button1);
+//			dialog = new Dialog(getActivity());
 
-			String content = fetch2();
-			textView.setText(content);
+			button.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					// 連網不能在main thread, 改用AsyncTask
+					// search(editText.getText().toString());
+
+					AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+
+						// doInBackgroud前執行
+						@Override
+						protected void onPreExecute() {
+							super.onPreExecute();
+//							dialog.show();
+						}
+
+						@Override
+						protected String doInBackground(Void... params) {
+							return search(editText.getText().toString());
+						}
+
+						// doInBackground後執行(UI THREAD)
+						@Override
+						protected void onPostExecute(String result) {
+							super.onPostExecute(result);
+//							dialog.dismiss();
+							Toast.makeText(getActivity(), result,
+									Toast.LENGTH_SHORT).show();
+						}
+					};
+
+					task.execute();
+				}
+			});
+
+			// String content = fetch2();
+			// textView.setText(content);
 			return rootView;
+		}
+
+		public String search(String address) {
+
+			String urlString = "http://maps.googleapis.com/maps/api/geocode/json?address="
+					+ address + "&sensor=false";
+			DefaultHttpClient client = new DefaultHttpClient();
+
+			HttpGet get = new HttpGet(urlString);
+
+			ResponseHandler<String> handler = new BasicResponseHandler();
+
+			try {
+				String result = client.execute(get, handler);
+				Log.d("debug", result);
+
+				JSONObject json = new JSONObject(result);
+				JSONArray jsonArrayResult = (JSONArray) json.get("results");
+				String realAddress = "";
+
+				for (int i = 0; i < jsonArrayResult.length(); i++) {
+					jsonArrayResult.getJSONObject(0).getString(
+							"formatted_address");
+				}
+				Log.d("debug", realAddress);
+
+				return realAddress;
+				// UI操作一定要在MAINTHREAD
+				// Toast.makeText(getActivity(), realAddress,
+				// Toast.LENGTH_SHORT)
+				// .show();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
 		}
 
 		private String fetch2() {
 
 			String urlString = "http://www.ntu.edu.tw/";
 			DefaultHttpClient client = new DefaultHttpClient();
-			
+
 			HttpGet get = new HttpGet(urlString);
-			
+
 			ResponseHandler<String> handler = new BasicResponseHandler();
-			
+
 			try {
 				String result = client.execute(get, handler);
 				return "2\r\n" + result;
@@ -105,7 +196,7 @@ public class MainActivity extends ActionBarActivity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
 
@@ -134,7 +225,5 @@ public class MainActivity extends ActionBarActivity {
 			return null;
 		}
 	}
-	
-	
 
 }
