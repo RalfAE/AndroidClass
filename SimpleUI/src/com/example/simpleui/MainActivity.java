@@ -1,10 +1,15 @@
 package com.example.simpleui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,14 +21,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.PushService;
 
 public class MainActivity extends ActionBarActivity {
@@ -44,6 +55,18 @@ public class MainActivity extends ActionBarActivity {
 		// When users indicate they are Giants fans, we subscribe them to that
 		// channel.
 		PushService.subscribe(this, "ChannelALL", MainActivity.class);
+		PushService.subscribe(this, "ID" + getDeviceId(), MainActivity.class);
+		register();
+	}
+
+	public String getDeviceId() {
+		return Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+	}
+
+	public void register() {
+		ParseObject obj = new ParseObject("DEVICE_ID");
+		obj.add("DEVICE_ID", getDeviceId());
+		obj.saveInBackground();
 	}
 
 	@Override
@@ -81,8 +104,11 @@ public class MainActivity extends ActionBarActivity {
 			}
 			Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
 
+			String deviceId = (String) spinner.getSelectedItem();
+
 			ParsePush push = new ParsePush();
-			push.setChannel("ChannelALL");
+			// push.setChannel("ChannelALL");
+			push.setChannel("ID" + deviceId);
 			push.setMessage(text);
 			push.sendInBackground();
 
@@ -102,6 +128,8 @@ public class MainActivity extends ActionBarActivity {
 
 		SharedPreferences sp;
 		Editor editor;
+
+		Spinner spinner;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -157,7 +185,35 @@ public class MainActivity extends ActionBarActivity {
 			textField.setText(sp.getString("text", "Hello World"));
 			checkBox.setChecked(sp.getBoolean("checked", false));
 
+			spinner = (Spinner) rootView.findViewById(R.id.spinner1);
+
 			return rootView;
+		}
+
+		private void loadData() {
+
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("DEVICE_ID");
+			query.findInBackground(new FindCallback<ParseObject>() {
+				public void done(List<ParseObject> msgList, ParseException e) {
+					if (e == null) {
+						List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+
+						String[] strArray = new String[data.size()];
+
+						for (int i = 0; i < strArray.length; i++) {
+							strArray[i] = data.get(i).toString();
+						}
+
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+								getActivity(),
+								android.R.layout.simple_spinner_item, strArray);
+
+						spinner.setAdapter(adapter);
+					} else {
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 
